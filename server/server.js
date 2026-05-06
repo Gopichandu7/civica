@@ -29,8 +29,8 @@ app.get("/", (req, res) => {
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-        user: "sachithbalaka@gmail.com",     // ✅ Replace with your Gmail address
-        pass: "pcgksspwidoackt d".replace(/\s+/g, ""), // ✅ App password (no spaces)
+        user: "gopichandmudili2@gmail.com",     // ✅ Replace with your Gmail address
+        pass: "kyea nvyo iiif ofwz".replace(/\s+/g, ""), // ✅ App password (no spaces)
     },
 });
 
