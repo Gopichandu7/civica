@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import Input from "../common/Input";
+import { API_BASE_URL } from "../../config";
 import { useNavigate } from "react-router-dom";
 import Message from "../common/Message";
 
@@ -53,7 +54,7 @@ const UserEnter = () => {
 
         try {
             const res = await axios.post(
-                "http://localhost:2000/send_otp",
+                `${API_BASE_URL}/send_otp`,
                 { email }
             );
 
@@ -83,7 +84,7 @@ const UserEnter = () => {
 
         try {
             const res = await axios.post(
-                "http://localhost:2000/verify-otp",
+                `${API_BASE_URL}/verify-otp`,
                 { email, otp }
             );
 
@@ -112,7 +113,7 @@ const UserEnter = () => {
         }
 
         try {
-            const res = await axios.post("http://localhost:2000/signup", {
+            const res = await axios.post(`${API_BASE_URL}/signup`, {
                 email,
                 password,
             });
@@ -140,7 +141,7 @@ const UserEnter = () => {
         }
 
         try {
-            const res = await axios.post("http://localhost:2000/signin", {
+            const res = await axios.post(`${API_BASE_URL}/signin`, {
                 email,
                 password,
             });

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { API_BASE_URL } from "../../../../../config";
 
 const RoadComplaints = () => {
 
@@ -12,7 +13,7 @@ const RoadComplaints = () => {
     const fetchComplaints = async () => {
         try {
 
-            const res = await axios.get("http://localhost:2000/complaints/road");
+            const res = await axios.get(`${API_BASE_URL}/complaints/road`);
 
             if (res.data.success) {
 
@@ -69,7 +70,7 @@ const RoadComplaints = () => {
 
         try {
 
-            await axios.post("http://localhost:2000/update-status", {
+            await axios.post(`${API_BASE_URL}/update-status`, {
                 complaintId: id,
                 newStatus: newStatus
             });
@@ -140,7 +141,7 @@ const RoadComplaints = () => {
                     <div key={item._id} className="deptCard">
 
                         <img
-                            src={`http://localhost:2000/${item.imagePath.replace(/\\/g, "/")}`}
+                            src={`${API_BASE_URL}/${item.imagePath.replace(/\\/g, "/")}`}
                             alt="complaint"
                         />
 

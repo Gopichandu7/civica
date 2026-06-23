@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { API_BASE_URL } from "../../../../../config";
 
 const UserHome = () => {
 
@@ -12,7 +13,7 @@ const UserHome = () => {
 
         try{
 
-            const res = await axios.get("http://localhost:2000/complaint-stats");
+            const res = await axios.get(`${API_BASE_URL}/complaint-stats`);
 
             if(res.data.success){
 

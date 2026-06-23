@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { API_BASE_URL } from "../../../../../config";
 
 const UserComplaints = () => {
 
@@ -19,7 +20,7 @@ const UserComplaints = () => {
             const email = decoded.email;
 
             const res = await axios.get(
-                `http://localhost:2000/user-complaints/${email}`
+                `${API_BASE_URL}/user-complaints/${email}`
             );
 
             if(res.data.success){
@@ -131,7 +132,7 @@ const UserComplaints = () => {
                     <div key={item._id} className="deptCard">
 
                         <img
-                            src={`http://localhost:2000/${item.imagePath.replace(/\\/g,"/")}`}
+                            src={`${API_BASE_URL}/${item.imagePath.replace(/\\/g,"/")}`}
                             alt="complaint"
                         />
 

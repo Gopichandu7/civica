@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { API_BASE_URL } from "../../../../../config";
 
 const RaiseComplaint = () => {
 
@@ -178,7 +179,7 @@ const RaiseComplaint = () => {
             formData.append("priorityScore", priorityScore);
 
             const res = await axios.post(
-                "http://localhost:2000/raise-complaint",
+                `${API_BASE_URL}/raise-complaint`,
                 formData,
                 {
                     headers: {
