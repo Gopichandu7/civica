@@ -3,7 +3,7 @@ import UserDashboard from './components/dashboards/userDashboard/UserDashboard'
 import WaterDashboard from './components/dashboards/WaterDashboard/WaterDashboard'
 import ElectricDashboard from './components/dashboards/ElectriDashboard/ElectricDashboard'
 import MunicipalDashboard from './components/dashboards/MunicipalDashboard/MunicipalDashboard'
-import RoadDashboard from './components/dashboards/RoadDashboard/RoadDashboard'
+import RoadDashboard from './components/dashboards/RoadDashboard/RoadDashBoard'
 import {Routes,Route} from 'react-router-dom'
 const App = () => {
     return (
