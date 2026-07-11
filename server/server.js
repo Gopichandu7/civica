@@ -151,6 +151,64 @@ app.post("/signin", async (req, res) => {
     }
 });
 
+app.post("/forgot-password-otp", async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.json({ success: false, message: "Email required" });
+    }
+
+    try {
+        const existingUser = await User.findOne({ email });
+        if (!existingUser) {
+            return res.json({ success: false, message: "User not found" });
+        }
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        await Otp.deleteMany({ email });
+        await Otp.create({ email, otp });
+
+        const mailOptions = {
+            from: "sachithbalaka@gmail.com",
+            to: email,
+            subject: "Civica Password Reset OTP",
+            text: `Your OTP for resetting the password is ${otp}. It is valid for 5 minutes.`,
+        };
+
+        await transporter.sendMail(mailOptions);
+        return res.json({ success: true, message: "Reset OTP sent to your email" });
+    } catch (err) {
+        console.error("Error sending reset OTP:", err);
+        return res.json({ success: false, message: "Failed to send reset OTP" });
+    }
+});
+
+app.post("/reset-password", async (req, res) => {
+    const { email, otp, newPassword } = req.body;
+
+    if (!email || !otp || !newPassword) {
+        return res.json({ success: false, message: "Missing fields" });
+    }
+
+    try {
+        const record = await Otp.findOne({ email, otp });
+        if (!record) {
+            return res.json({ success: false, message: "Invalid OTP" });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        await User.updateOne({ email }, { password: hashedPassword });
+        await Otp.deleteMany({ email });
+
+        return res.json({ success: true, message: "Password reset successfully" });
+    } catch (err) {
+        console.error("Error resetting password:", err);
+        return res.json({ success: false, message: "Failed to reset password" });
+    }
+});
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, "uploads/");

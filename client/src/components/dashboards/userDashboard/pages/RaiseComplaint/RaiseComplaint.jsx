@@ -228,7 +228,18 @@ const RaiseComplaint = () => {
                     onDragOver={(e) => e.preventDefault()}
                 >
                     {image ? (
-                        <p>{image.name}</p>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                            <p>{image.name}</p>
+                            <i 
+                                className="fa-solid fa-trash" 
+                                style={{ color: 'red', cursor: 'pointer' }}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setImage(null);
+                                }}
+                                title="Remove image"
+                            ></i>
+                        </div>
                     ) : (
                         <>
                             <p>Drag & Drop Image Here</p>

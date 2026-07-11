@@ -12,6 +12,9 @@ const UserEnter = () => {
     const [signupDiv, setSignupDiv] = useState(false);
     const [otpDiv, setOtpDiv] = useState(false);
     const [passwordDiv, setPasswordDiv] = useState(false);
+    const [forgotEmailDiv, setForgotEmailDiv] = useState(false);
+    const [forgotOtpDiv, setForgotOtpDiv] = useState(false);
+    const [resetPasswordDiv, setResetPasswordDiv] = useState(false);
 
     // 🔤 INPUT STATES
     const [email, setEmail] = useState("");
@@ -33,6 +36,9 @@ const UserEnter = () => {
         setSignupDiv(false);
         setOtpDiv(false);
         setPasswordDiv(false);
+        setForgotEmailDiv(false);
+        setForgotOtpDiv(false);
+        setResetPasswordDiv(false);
         setMsg("");
     };
 
@@ -41,6 +47,20 @@ const UserEnter = () => {
         setSignupDiv(true);
         setOtpDiv(false);
         setPasswordDiv(false);
+        setForgotEmailDiv(false);
+        setForgotOtpDiv(false);
+        setResetPasswordDiv(false);
+        setMsg("");
+    };
+
+    const showForgot = () => {
+        setSigninDiv(false);
+        setSignupDiv(false);
+        setOtpDiv(false);
+        setPasswordDiv(false);
+        setForgotEmailDiv(true);
+        setForgotOtpDiv(false);
+        setResetPasswordDiv(false);
         setMsg("");
     };
 
@@ -133,6 +153,77 @@ const UserEnter = () => {
         }
     };
 
+    // 📩 SEND FORGOT OTP
+    const sendForgotOtp = async () => {
+        if (!email) {
+            setKind("bad");
+            setMsg("Email is required");
+            return;
+        }
+
+        try {
+            const res = await axios.post(
+                "http://localhost:2000/forgot-password-otp",
+                { email }
+            );
+
+            if (res.data.success) {
+                setKind("good");
+                setMsg(res.data.message || "OTP sent to your email");
+                setForgotEmailDiv(false);
+                setForgotOtpDiv(true);
+            } else {
+                setKind("bad");
+                setMsg(res.data.message || "Failed to send OTP");
+            }
+        } catch (error) {
+            setKind("bad");
+            setMsg("Server error while sending OTP " + error.message);
+        }
+    };
+
+    // ✅ PROCEED TO RESET PASSWORD
+    const verifyForgotOtp = () => {
+        if (!otp) {
+            setKind("bad");
+            setMsg("Please enter OTP");
+            return;
+        }
+        setForgotOtpDiv(false);
+        setResetPasswordDiv(true);
+        setMsg("");
+    };
+
+    // 🔐 RESET PASSWORD
+    const handleResetPassword = async () => {
+        if (password !== confirmPassword) {
+            setKind("bad");
+            setMsg("Passwords do not match");
+            return;
+        }
+
+        try {
+            const res = await axios.post("http://localhost:2000/reset-password", {
+                email,
+                otp,
+                newPassword: password,
+            });
+
+            if (res.data.success) {
+                setKind("good");
+                setMsg("Password reset successfully. You can now sign in.");
+                setResetPasswordDiv(false);
+                setSigninDiv(true);
+            } else {
+                setKind("bad");
+                setMsg(res.data.message);
+            }
+        } catch (error) {
+            setKind("bad");
+            setMsg("Reset password failed");
+        }
+    };
+
     const handleSignin = async () => {
         if (!email || !password) {
             setKind("bad");
@@ -212,6 +303,7 @@ const UserEnter = () => {
                                 Sign In
                             </div>
 
+                            <p className="link" onClick={showForgot} style={{ marginBottom: '10px' }}>Forgot Password?</p>
                             <p className="link" onClick={showSignup}>Click here if new user</p>
                         </div>
                     )}
@@ -281,6 +373,62 @@ const UserEnter = () => {
                             <div className="detBot" onClick={finalSignup}>
                                 Signup
                             </div>
+                        </div>
+                    )}
+
+                    {/* 🔹 FORGOT EMAIL */}
+                    {forgotEmailDiv && (
+                        <div className="formBox">
+                            <h2>Reset Password</h2>
+                            <Input placeholder="Enter Email" value={email} setValue={setEmail} />
+                            <Message kind={kind} text={msg} />
+                            <div className="detBot" onClick={sendForgotOtp}>
+                                Send OTP
+                            </div>
+                            <p className="link" onClick={showSignin}>Back to Sign In</p>
+                        </div>
+                    )}
+
+                    {/* 🔹 FORGOT OTP */}
+                    {forgotOtpDiv && (
+                        <div className="formBox">
+                            <h2>Verify OTP</h2>
+                            <Input placeholder="Enter OTP" value={otp} setValue={setOtp} />
+                            <Message kind={kind} text={msg} />
+                            <div className="detBot" onClick={verifyForgotOtp}>
+                                Verify
+                            </div>
+                            <p className="link" onClick={showSignin}>Cancel</p>
+                        </div>
+                    )}
+
+                    {/* 🔹 RESET PASSWORD */}
+                    {resetPasswordDiv && (
+                        <div className="formBox">
+                            <h2>New Password</h2>
+                            <div className="passBox">
+                                <input
+                                    type={showPass ? "text" : "password"}
+                                    placeholder="Enter New Password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                                <i
+                                    className={`fa ${showPass ? "fa-eye-slash" : "fa-eye"}`}
+                                    onClick={() => setShowPass(!showPass)}
+                                ></i>
+                            </div>
+                            <Input
+                                type={showPass ? "text" : "password"}
+                                placeholder="Confirm New Password"
+                                value={confirmPassword}
+                                setValue={setConfirmPassword}
+                            />
+                            <Message kind={kind} text={msg} />
+                            <div className="detBot" onClick={handleResetPassword}>
+                                Reset Password
+                            </div>
+                            <p className="link" onClick={showSignin}>Cancel</p>
                         </div>
                     )}
 
