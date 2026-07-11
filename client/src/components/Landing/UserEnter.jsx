@@ -163,7 +163,7 @@ const UserEnter = () => {
 
         try {
             const res = await axios.post(
-                "http://localhost:2000/forgot-password-otp",
+                `${API_BASE_URL}/forgot-password-otp`,
                 { email }
             );
 
@@ -203,7 +203,7 @@ const UserEnter = () => {
         }
 
         try {
-            const res = await axios.post("http://localhost:2000/reset-password", {
+            const res = await axios.post(`${API_BASE_URL}/reset-password`, {
                 email,
                 otp,
                 newPassword: password,

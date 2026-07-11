@@ -249,9 +249,11 @@ app.post("/raise-complaint", upload.single("image"), async (req, res) => {
         // Get absolute image path for Python model
         const imagePath = path.resolve(req.file.path);
 
+        const aiApiUrl = process.env.AI_API_URL ? `${process.env.AI_API_URL}/predict` : "http://127.0.0.1:8000/predict";
+
         // Call FastAPI AI server
         const aiResponse = await axios.post(
-            "http://127.0.0.1:8000/predict",
+            aiApiUrl,
             { image_path: imagePath }
         );
 

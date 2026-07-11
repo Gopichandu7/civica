@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: civica-server
+    env: node
+    buildCommand: cd server && npm install
+    startCommand: cd server && node server.js
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: AI_API_URL
+        fromService:
+          name: civica-ai
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+          property: url
+
+  - type: web
+    name: civica-ai
+    env: python
+    buildCommand: cd AI && pip install -r requirements.txt
+    startCommand: cd AI && uvicorn api:app --host 0.0.0.0 --port 10000
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
