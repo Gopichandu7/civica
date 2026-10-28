@@ -177,20 +177,27 @@ function classifyDepartment(description) {
     const keywords = {
         water: [
             "water", "pipe", "flood", "leak", "drainage", "sewage",
-            "drain", "overflow", "tap", "supply", "puddle", "waterlogging"
+            "drain", "overflow", "tap", "supply", "puddle", "waterlogging",
+            "drinking", "borewell", "canal", "gutter", "wet", "moisture"
         ],
         electric: [
             "electric", "electricity", "light", "power", "wire", "streetlight",
-            "transformer", "outage", "shock", "short circuit", "pole", "voltage"
+            "transformer", "outage", "shock", "short circuit", "pole", "voltage",
+            "current", "bulb", "lamp", "fuse", "dark", "darkness", "blackout", "no light"
         ],
         road: [
             "road", "pothole", "crack", "footpath", "pavement", "speed",
-            "bump", "divider", "traffic", "bridge", "signal", "street"
+            "bump", "divider", "traffic", "bridge", "signal", "street",
+            "path", "highway", "lane", "tar", "broken road", "damaged road",
+            "road damage", "road problem", "road issue", "road repair",
+            "road broken", "uneven", "mud", "gravel", "ditch", "pit",
+            "manhole", "speed breaker", "zebra crossing", "accident", "slope"
         ],
         municipal: [
             "garbage", "waste", "trash", "litter", "dust", "park",
             "tree", "sanitation", "clean", "smell", "animal",
-            "stray", "building", "construction", "encroachment"
+            "stray", "building", "construction", "encroachment",
+            "mosquito", "pest", "open defecation", "playground", "drainage smell"
         ]
     };
 
@@ -202,6 +209,17 @@ function classifyDepartment(description) {
         if (score > maxScore) {
             maxScore = score;
             assigned = dept;
+        }
+    }
+
+    // If no keywords matched at all, try to detect road as a standalone word
+    if (maxScore === 0) {
+        if (text.includes("road") || text.includes("street") || text.includes("path")) {
+            assigned = "road";
+        } else if (text.includes("water") || text.includes("pipe")) {
+            assigned = "water";
+        } else if (text.includes("light") || text.includes("electric")) {
+            assigned = "electric";
         }
     }
 
