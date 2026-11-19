@@ -28,8 +28,8 @@ app.get("/", (req, res) => {
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-        user: "",
-        pass: "",
+        user: process.env.SENDER_MAIL,
+        pass: process.env.SENDER_MAIL_PASS_KEY,
     },
 });
 
