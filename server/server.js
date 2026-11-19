@@ -57,7 +57,7 @@ app.post("/send_otp", async (req, res) => {
         return res.json({ success: true, message: "OTP sent successfully" });
     } catch (err) {
         console.error("Error sending email:", err);
-        return res.json({ success: false, message: "Email sending failed" });
+        return res.json({ success: false, message: `Email sending failed ${err}` });
     }
 });
 
@@ -83,7 +83,7 @@ app.post("/signup", async (req, res) => {
         const token = jwt.sign({ email: user.email }, JWT_SECRET, { expiresIn: "1d" });
         return res.json({ success: true, token });
     } catch (err) {
-        return res.json({ success: false, message: "Signup failed" });
+        return res.json({ success: false, message: `Signup failed ${err}` });
     }
 });
 
@@ -100,8 +100,8 @@ app.post("/signin", async (req, res) => {
 
         const token = jwt.sign({ email: user.email }, JWT_SECRET, { expiresIn: "1d" });
         return res.json({ success: true, token });
-    } catch {
-        return res.json({ success: false, message: "Signin failed" });
+    } catch (err) {
+        return res.json({ success: false, message: `Signin failed ${err}` });
     }
 });
 
@@ -126,7 +126,7 @@ app.post("/forgot-password-otp", async (req, res) => {
         return res.json({ success: true, message: "Reset OTP sent to your email" });
     } catch (err) {
         console.error("Error sending reset OTP:", err);
-        return res.json({ success: false, message: "Failed to send reset OTP" });
+        return res.json({ success: false, message: `Failed to send reset OTP ${err}` });
     }
 });
 
@@ -144,7 +144,7 @@ app.post("/reset-password", async (req, res) => {
         return res.json({ success: true, message: "Password reset successfully" });
     } catch (err) {
         console.error("Error resetting password:", err);
-        return res.json({ success: false, message: "Failed to reset password" });
+        return res.json({ success: false, message: `Failed to reset password ${err}` });
     }
 });
 
