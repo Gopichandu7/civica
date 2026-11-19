@@ -73,6 +73,7 @@ const UserEnter = () => {
         }
 
         try {
+            
             const res = await axios.post(
                 `${API_BASE_URL}/send_otp`,
                 { email }

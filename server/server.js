@@ -6,13 +6,15 @@ const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const path = require("path");
+const dotenv=require("dotenv")
+dotenv.config()
 
 const User = require("./module/User");
 const Otp = require("./module/Otp");
 const Complaint = require("./module/Complaint");
 
 const app = express();
-const JWT_SECRET = process.env.JWT_SECRET || "civica_secret_key";
+const JWT_SECRET = process.env.JWT_SECRET
 
 app.use("/uploads", express.static("uploads"));
 app.use(cors());
@@ -26,8 +28,8 @@ app.get("/", (req, res) => {
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-        user: "gopichandmudili2@gmail.com",
-        pass: "kyeavnyoiiifofwz",
+        user: "",
+        pass: "",
     },
 });
 
@@ -35,6 +37,7 @@ const transporter = nodemailer.createTransport({
 
 app.post("/send_otp", async (req, res) => {
     const { email } = req.body;
+    console.log(email)
     if (!email) return res.json({ success: false, message: "Email required" });
 
     const existingUser = await User.findOne({ email });
@@ -68,6 +71,7 @@ app.post("/verify-otp", async (req, res) => {
 
 app.post("/signup", async (req, res) => {
     const { email, password } = req.body;
+    console.log(email,password)
     if (!email || !password) return res.json({ success: false, message: "Missing fields" });
 
     try {
