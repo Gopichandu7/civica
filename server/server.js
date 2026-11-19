@@ -49,7 +49,7 @@ app.post("/send_otp", async (req, res) => {
 
     try {
         await transporter.sendMail({
-            from: "gopichandmudili2@gmail.com",
+            from: process.env.SENDER_MAIL,
             to: email,
             subject: "Civica OTP Verification",
             text: `Your OTP is ${otp}. It is valid for 5 minutes.`,
