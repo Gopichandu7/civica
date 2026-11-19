@@ -6,7 +6,7 @@ const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const path = require("path");
-const dotenv=require("dotenv")
+const dotenv = require("dotenv")
 dotenv.config()
 
 const User = require("./module/User");
@@ -24,36 +24,48 @@ app.get("/", (req, res) => {
     res.send("hello civica");
 });
 
-// ===================== EMAIL TRANSPORTER =====================
-const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: process.env.SENDER_MAIL,
-        pass: process.env.SENDER_MAIL_PASS_KEY,
-    },
-});
-
 // ===================== AUTH ROUTES =====================
 
 app.post("/send_otp", async (req, res) => {
     const { email } = req.body;
-    console.log(email)
     if (!email) return res.json({ success: false, message: "Email required" });
 
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.json({ success: false, message: "User already exists" });
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    await Otp.deleteMany({ email });
-    await Otp.create({ email, otp });
 
     try {
-        await transporter.sendMail({
-            from: process.env.SENDER_MAIL,
-            to: email,
-            subject: "Civica OTP Verification",
-            text: `Your OTP is ${otp}. It is valid for 5 minutes.`,
+        const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "api-key": process.env.BREVO_API_KEY,
+            },
+            body: JSON.stringify({
+                sender: {
+                    name: "Civica",
+                    email: process.env.SENDER_MAIL,
+                },
+                to: [{ email }],
+                subject: "Civica OTP Verification",
+                textContent: `Your OTP is ${otp}. It is valid for 5 minutes.`,
+            }),
         });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.error("Error sending email:", data);
+            return res.json({
+                success: false,
+                message: `Email sending failed: ${data.message || response.statusText}`,
+            });
+        }
+
+        await Otp.deleteMany({ email });
+        await Otp.create({ email, otp });
+
         return res.json({ success: true, message: "OTP sent successfully" });
     } catch (err) {
         console.error("Error sending email:", err);
@@ -71,7 +83,7 @@ app.post("/verify-otp", async (req, res) => {
 
 app.post("/signup", async (req, res) => {
     const { email, password } = req.body;
-    console.log(email,password)
+    console.log(email, password)
     if (!email || !password) return res.json({ success: false, message: "Missing fields" });
 
     try {
